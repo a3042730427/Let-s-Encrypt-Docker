@@ -1,6 +1,10 @@
 參考資料:
 https://doc.traefik.io/traefik/v1.7/user-guide/docker-and-lets-encrypt/
 
+SSL Certificates Made EASY With Traefik Proxy, Clouflare, and Let's Encrypt - Tutorial
+https://www.youtube.com/watch?v=XH9XgiVM_z4
+
+
 目標:
 透過Let's Encrypt自動產生和更新SSL證書
 
