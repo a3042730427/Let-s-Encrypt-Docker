@@ -154,10 +154,236 @@ Creating traefik_app_1_1 ... done
 root@vmi1476380:/opt/traefik#
 
 
+root@vmi1476380:/opt/traefik# docker ps -a
+CONTAINER ID   IMAGE                  COMMAND                  CREATED          STATUS                          PORTS     NAMES
+55fd6f0cf311   appleboy/test:alpine   "/bin/helloworld"        3 minutes ago    Up 3 minutes                              traefik_app_2_1
+a3f46190a936   appleboy/test:alpine   "/bin/helloworld"        3 minutes ago    Up 3 minutes                              traefik_app_1_1
+b5ce70be7614   traefik                "/entrypoint.sh trae…"   12 minutes ago   Restarting (1) 12 seconds ago             traefik
+root@vmi1476380:/opt/traefik#
+
+
+root@vmi1476380:/opt/traefik# docker logs b5ce70be7614
+2024/01/02 09:36:53 command traefik error: field not found, node: redirect
+2024/01/02 09:36:53 command traefik error: field not found, node: redirect
+2024/01/02 09:36:54 command traefik error: field not found, node: redirect
+2024/01/02 09:36:55 command traefik error: field not found, node: redirect
+2024/01/02 09:36:56 command traefik error: field not found, node: redirect
+2024/01/02 09:36:58 command traefik error: field not found, node: redirect
+2024/01/02 09:37:02 command traefik error: field not found, node: redirect
+2024/01/02 09:37:09 command traefik error: field not found, node: redirect
+2024/01/02 09:37:22 command traefik error: field not found, node: redirect
+2024/01/02 09:37:48 command traefik error: field not found, node: redirect
+2024/01/02 09:38:40 command traefik error: field not found, node: redirect
+2024/01/02 09:39:40 command traefik error: field not found, node: redirect
+2024/01/02 09:40:40 command traefik error: field not found, node: redirect
+2024/01/02 09:41:41 command traefik error: field not found, node: redirect
+2024/01/02 09:42:41 command traefik error: field not found, node: redirect
+2024/01/02 09:43:42 command traefik error: field not found, node: redirect
+2024/01/02 09:44:42 command traefik error: field not found, node: redirect
+2024/01/02 09:45:43 command traefik error: field not found, node: redirect
+2024/01/02 09:46:43 command traefik error: field not found, node: redirect
+2024/01/02 09:47:43 command traefik error: field not found, node: redirect
+2024/01/02 09:48:44 command traefik error: field not found, node: redirect
+2024/01/02 09:49:44 command traefik error: field not found, node: redirect
+root@vmi1476380:/opt/traefik#
+
+
+配置文件版本兼容性：
+
+Traefik在2.x版本中做了很多改变，包括配置文件格式的改变。如果您使用的是Traefik v2.x，
+您的配置文件需要是YAML格式（.yml 或 .yaml），而不是TOML（.toml）。traefik.toml 是 Traefik v1.x 的配置文件格式。
+
+
+root@vmi1476380:/opt/traefik# mv traefik.toml traefik.yml
+root@vmi1476380:/opt/traefik# ls
+acme.json  docker-compose.yml  traefik.yml
+root@vmi1476380:/opt/traefik#
+
+
+
+root@vmi1476380:/opt/traefik# vim docker-compose.yml
+
+
+
+version: '2'
+
+services:
+  traefik:
+    image: traefik
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/traefik/traefik.yml:/traefik.yml
+      - /opt/traefik/acme.json:/acme.json
+    container_name: traefik
+
+networks:
+  web:
+    external: true
+
+
+
+root@vmi1476380:/opt/traefik# docker-compose up -d
+WARNING: Found orphan containers (traefik_app_2_1, traefik_app_1_1) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up.
+Recreating traefik ... done
+root@vmi1476380:/opt/traefik#
+
+
+
+vim traefik.yml
+
+
+
+debug: false
+
+logLevel = "INFO"
+defaultEntryPoints = ["https","http"]
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+    entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+  [entryPoints.https.tls]
+
+[acme]
+email = "xxxxx@gmail.com"
+storage = "acme.json"
+entryPoint = "https"
+onHostRule = true
+
+[acme.httpChallenge]
+entryPoint = "http"
+
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+watch = true
+
+
+
+vim traefik.yml
 
 
 
 
+debug: false
+logLevel: "INFO"
+defaultEntryPoints:
+  - "https"
+  - "http"
+
+entryPoints:
+  http:
+    address: ":80"
+    redirect:
+      entryPoint: "https"
+  https:
+    address: ":443"
+    tls: {}
+
+acme:
+  email: "xxxxx@gmail.com"
+  storage: "acme.json"
+  entryPoint: "https"
+  onHostRule: true
+  httpChallenge:
+    entryPoint: "http"
+
+docker:
+  endpoint: "unix:///var/run/docker.sock"
+  watch: true
+
+
+
+
+
+vim traefik.yml
+
+
+
+# Traefik v2.x YAML configuration
+
+# API and Dashboard configuration
+api:
+  dashboard: true
+
+# Log configuration
+log:
+  level: INFO
+
+# EntryPoints definition
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+
+# Enable Docker provider
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    watch: true
+    exposedByDefault: false
+
+# Define dynamic HTTP configuration
+http:
+  routers:
+    my-router:
+      rule: "Host(`mydomain.com`)"  # Change this to your domain
+      entryPoints:
+        - "web"
+      middlewares:
+        - redirect-to-https
+      service: "my-service"  # Define the service name here
+
+    my-secure-router:
+      rule: "Host(`mydomain.com`)"  # Change this to your domain
+      entryPoints:
+        - "websecure"
+      tls: 
+        certResolver: "myresolver"
+      service: "my-service"  # Define the service name here
+
+  services:
+    my-service:  # Define a service (adjust as needed)
+      loadBalancer:
+        servers:
+          - url: "http://172.17.0.2:80"  # Change this to your service's IP and port
+
+  middlewares:
+    redirect-to-https:
+      redirectScheme:
+        scheme: https
+        permanent: true
+
+# Enable TLS and automatic HTTPS certificate generation
+certificatesResolvers:
+  myresolver:
+    acme:
+      email: "xxxxx@gmail.com"  # Your email here
+      storage: "acme.json"
+      httpChallenge:
+        entryPoint: "web"
+
+
+
+
+root@vmi1476380:/opt/traefik# docker-compose up -d
+WARNING: Found orphan containers (traefik_app_2_1, traefik_app_1_1) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up.
+traefik is up-to-date
+root@vmi1476380:/opt/traefik# docker ps -a
+CONTAINER ID   IMAGE                  COMMAND                  CREATED          STATUS          PORTS                                      NAMES
+8fbfee888004   traefik                "/entrypoint.sh trae…"   22 minutes ago   Up 4 minutes    0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp   traefik
+55fd6f0cf311   appleboy/test:alpine   "/bin/helloworld"        54 minutes ago   Up 54 minutes                                              traefik_app_2_1
+a3f46190a936   appleboy/test:alpine   "/bin/helloworld"        54 minutes ago   Up 54 minutes                                              traefik_app_1_1
+root@vmi1476380:/opt/traefik#
 
 
 
