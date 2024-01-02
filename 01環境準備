@@ -9,7 +9,7 @@ https://doc.traefik.io/traefik/v1.7/user-guide/docker-and-lets-encrypt/
 2.已安裝好Docker and docker-compose
 3.我們使用虛構網域 my-awesome-app.org
 
-we're going to use a single network called web where all containers that are handling HTTP traffic (including Traefik) will reside in
+我們將使用一個名為 web 的單一網絡，其中處理 HTTP 流量（包括 Traefik）的所有容器都將駐留在
 
 Lab環境準備:
 雲端VPS主機:contabo
