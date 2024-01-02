@@ -98,6 +98,7 @@ root@vmi1476380:/opt/traefik#
 
 https://hub.docker.com/_/traefik
 
+root@vmi1476380:/opt/traefik# vim docker-compose.yml
 
 
 
