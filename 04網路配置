@@ -1,5 +1,42 @@
-使用一個名為 web 的單一網絡，其中處理 HTTP 流量（包括 Traefik）的所有容器都
+使用一個名為 web 的單一網絡，其中處理 HTTP 流量（包括 Traefik）的所有容器
 root@vmi1476380:~# docker network create web
 2e690255900183ea776b0f3207d880bbde9a3ab02872cb3a1cf0bff53909c345
 root@vmi1476380:~#
+
+建立一個目錄，我們將在其中配置 Traefik 的其餘部分
+root@vmi1476380:~# mkdir -p /opt/traefik
+root@vmi1476380:~#
+
+在此目錄中，我們將建立 3 個空檔
+root@vmi1476380:~# touch /opt/traefik/docker-compose.yml
+root@vmi1476380:~# touch /opt/traefik/acme.json && chmod 600 /opt/traefik/acme.json
+root@vmi1476380:~# touch /opt/traefik/traefik.toml
+
+docker-compose.yml 檔案將為我們提供一種簡單、一致且更重要的是確定性的建立 Traefik 的方式。 文件內容如下：
+root@vmi1476380:~# vim /opt/traefik/docker-compose.yml
+
+
+version: '2'
+
+services:
+  traefik:
+    image: traefik:<stable v1.7 from https://hub.docker.com/_/traefik>
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/traefik/traefik.toml:/traefik.toml
+      - /opt/traefik/acme.json:/acme.json
+    container_name: traefik
+
+networks:
+  web:
+    external: true
+
+
+
 
