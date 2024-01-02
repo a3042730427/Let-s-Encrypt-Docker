@@ -101,8 +101,42 @@ https://hub.docker.com/_/traefik
 
 
 
+version: '2'
+
+services:
+  traefik:
+    image: traefik:v2.10.7
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/traefik/traefik.toml:/traefik.toml
+      - /opt/traefik/acme.json:/acme.json
+    container_name: traefik
+
+networks:
+  web:
+    external: true
 
 
+
+將安裝版本修改為 >> image: traefik:v2.10.7
+
+root@vmi1476380:/opt/traefik# docker-compose up -d
+Pulling traefik (traefik:v2.10.7)...
+v2.10.7: Pulling from library/traefik
+c926b61bad3b: Pull complete
+d9a399aa5355: Pull complete
+3106c23e2970: Pull complete
+cc067951b11f: Pull complete
+Digest: sha256:c5181ddf303f1ccfd4bd6d1d9c4867b0500efb6089a0f9ccb16612438f6e934f
+Status: Downloaded newer image for traefik:v2.10.7
+Creating traefik ... done
+root@vmi1476380:/opt/traefik#
 
 
 
