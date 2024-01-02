@@ -1,4 +1,6 @@
 安裝docker
+
+
 root@vmi1476380:~# docker
 Command 'docker' not found, but can be installed with:
 apt install docker.io      # version 24.0.5-0ubuntu1~22.04.1, or
@@ -190,16 +192,6 @@ Run 'docker COMMAND --help' for more information on a command.
 
 For more help on how to use Docker, head to https://docs.docker.com/go/guides/
 root@vmi1476380:~#
-
-
-
-
-
-
-
-
-
-
 
 
 
