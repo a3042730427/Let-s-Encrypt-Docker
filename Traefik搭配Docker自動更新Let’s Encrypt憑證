@@ -39,6 +39,51 @@ networks:
 
 
 
+root@vmi1476380:~# vim /opt/traefik/traefik.toml
+
+
+debug = false
+
+logLevel = "INFO"
+defaultEntryPoints = ["https","http"]
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+    entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+  [entryPoints.https.tls]
+
+[acme]
+email = "xxxxx@gmail.com"
+storage = "acme.json"
+entryPoint = "https"
+onHostRule = true
+
+[acme.httpChallenge]
+entryPoint = "http"
+
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+watch = true
+
+root@vmi1476380:~# cd /opt/traefik
+
+root@vmi1476380:/opt/traefik# docker-compose up -d
+Pulling traefik (traefik:)...
+latest: Pulling from library/traefik
+Digest: sha256:c5181ddf303f1ccfd4bd6d1d9c4867b0500efb6089a0f9ccb16612438f6e934f
+Status: Downloaded newer image for traefik:latest
+Recreating traefik ... done
+root@vmi1476380:/opt/traefik#
+
+
+
+
+
+
 
 
 
