@@ -38,6 +38,24 @@ networks:
 
 
 
+root@vmi1476380:~# cd /opt/traefik
+
+root@vmi1476380:/opt/traefik# docker-compose up -d
+Pulling traefik (traefik:)...
+latest: Pulling from library/traefik
+Digest: sha256:c5181ddf303f1ccfd4bd6d1d9c4867b0500efb6089a0f9ccb16612438f6e934f
+Status: Downloaded newer image for traefik:latest
+Recreating traefik ... done
+root@vmi1476380:/opt/traefik#
+
+
+
+root@vmi1476380:~# docker ps -a
+CONTAINER ID   IMAGE     COMMAND                  CREATED              STATUS                          PORTS     NAMES
+b5ce70be7614   traefik   "/entrypoint.sh trae…"   About a minute ago   Restarting (1) 12 seconds ago             traefik
+root@vmi1476380:~#
+
+
 
 root@vmi1476380:~# vim /opt/traefik/traefik.toml
 
@@ -69,15 +87,75 @@ entryPoint = "http"
 endpoint = "unix:///var/run/docker.sock"
 watch = true
 
-root@vmi1476380:~# cd /opt/traefik
+
+
+
+
+
+root@vmi1476380:~# rm /opt/traefik/docker-compose.yml
+root@vmi1476380:~# touch /opt/traefik/docker-compose.yml
+root@vmi1476380:~# vim /opt/traefik/docker-compose.yml
+
+
+version: '3'
+
+services:
+  app_1:
+    image: appleboy/test:alpine
+    restart: always
+    networks:
+      - web
+    logging:
+      options:
+        max-size: "100k"
+        max-file: "3"
+    labels:
+      - "traefik.docker.network=web"
+      - "traefik.enable=true"
+      - "traefik.basic.frontend.rule=Host:demo1.ggz.tw"
+      - "traefik.basic.port=8080"
+      - "traefik.basic.protocol=http"
+
+  app_2:
+    image: appleboy/test:alpine
+    restart: always
+    networks:
+      - web
+    logging:
+      options:
+        max-size: "100k"
+        max-file: "3"
+    labels:
+      - "traefik.docker.network=web"
+      - "traefik.enable=true"
+      - "traefik.basic.frontend.rule=Host:demo2.ggz.tw"
+      - "traefik.basic.port=8080"
+      - "traefik.basic.protocol=http"
+
+networks:
+  web:
+    external: true
+
+
+
+root@vmi1476380:~# cd /opt/traefik/
 
 root@vmi1476380:/opt/traefik# docker-compose up -d
-Pulling traefik (traefik:)...
-latest: Pulling from library/traefik
-Digest: sha256:c5181ddf303f1ccfd4bd6d1d9c4867b0500efb6089a0f9ccb16612438f6e934f
-Status: Downloaded newer image for traefik:latest
-Recreating traefik ... done
+WARNING: Found orphan containers (traefik) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up.
+Pulling app_1 (appleboy/test:alpine)...
+alpine: Pulling from appleboy/test
+c87736221ed0: Pull complete
+6cc213af4ac4: Pull complete
+5f51113f149e: Pull complete
+Digest: sha256:9803314670731a1c5e5be0b463f6b98b208aa169954b375ba1b286df47f77028
+Status: Downloaded newer image for appleboy/test:alpine
+Creating traefik_app_2_1 ... done
+Creating traefik_app_1_1 ... done
 root@vmi1476380:/opt/traefik#
+
+
+
+
 
 
 
