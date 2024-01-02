@@ -80,7 +80,23 @@ entryPoint = "http"
 
 使用 Let's Encrypt 啟用 SSL 憑證的自動請求和設定。這些憑證將儲存在 acme.json 檔案中，您可以自行備份並儲存在異地。
 
+讓我們啟動容器。從/opt/traefik目錄中運行docker-compose up -d它將創建並啟動 Traefik 容器。
+root@vmi1476380:~# cd /opt/traefik/
+root@vmi1476380:/opt/traefik# ls -l
+total 8
+-rw------- 1 root root   0 Jan  2 06:11 acme.json
+-rw-r--r-- 1 root root 411 Jan  2 06:14 docker-compose.yml
+-rw-r--r-- 1 root root 533 Jan  2 06:24 traefik.toml
+root@vmi1476380:/opt/traefik#
 
+遇到問題,先檢查docker-compose.yml
+root@vmi1476380:/opt/traefik# docker-compose up -d
+ERROR: invalid reference format
+root@vmi1476380:/opt/traefik#
+
+访问 Docker Hub：访问 Traefik on Docker Hub 查找稳定版 v1.7 的具体标签
+
+https://hub.docker.com/_/traefik
 
 
 
