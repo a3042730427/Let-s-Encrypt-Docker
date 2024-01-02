@@ -1,3 +1,9 @@
+Target
 use Let's Encrypt to automatically generate and renew SSL certificates per hostname
+
+Setting Up
+a server with a public IP address, with Docker and docker-compose installed on it
+
+
 
   
