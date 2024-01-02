@@ -1,9 +1,18 @@
-Target
+參考資料:
+https://doc.traefik.io/traefik/v1.7/user-guide/docker-and-lets-encrypt/
+
+目標:
 use Let's Encrypt to automatically generate and renew SSL certificates per hostname
 
-Setting Up
-a server with a public IP address, with Docker and docker-compose installed on it
+配置:
+1.a server with a public IP address, with Docker and docker-compose installed on it
+2.we're using the fictitious domain my-awesome-app.org
 
+we're going to use a single network called web where all containers that are handling HTTP traffic (including Traefik) will reside in
 
+Lab environment:
+Cloud VPS:contabo
+VM*1 (CPU 4 ,RAM 8GB, Disk 200GB SSD)
+Operating System: Ubuntu 22.04
 
   
