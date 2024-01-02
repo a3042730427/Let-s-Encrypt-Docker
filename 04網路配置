@@ -1,0 +1,5 @@
+使用一個名為 web 的單一網絡，其中處理 HTTP 流量（包括 Traefik）的所有容器都
+root@vmi1476380:~# docker network create web
+2e690255900183ea776b0f3207d880bbde9a3ab02872cb3a1cf0bff53909c345
+root@vmi1476380:~#
+
