@@ -38,5 +38,58 @@ networks:
     external: true
 
 
+如您所見，我們正在容器中安裝 traefik.toml 檔案以及（空）acme.json 檔案。
+我們還在容器中安裝了 /var/run/docker.sock Docker 套接字，因此 Traefik 可以監聽 Docker 事件並在建立（或關閉）容器時重新配置自己的內部配置。
+此外，我們還確保在出現問題時（或：如果伺服器重新啟動），Docker 引擎會自動重新啟動容器。我們在主機上發布預設 HTTP 連接埠 80 和 443
+確保容器放置在我們之前創建的網路中
+我們給這個容器一個名為 traefik 的靜態名稱
+
+traefik.toml配置
+root@vmi1476380:~# vim /opt/traefik/traefik.toml
+
+
+debug = false
+
+logLevel = "ERROR"
+defaultEntryPoints = ["https","http"]
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+    entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+  [entryPoints.https.tls]
+
+[retry]
+
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+domain = "my-awesome-app.org"
+watch = true
+exposedByDefault = false
+
+[acme]
+email = "your-email-here@my-awesome-app.org"
+storage = "acme.json"
+entryPoint = "https"
+onHostRule = true
+[acme.httpChallenge]
+entryPoint = "http"
+
+使用 Let's Encrypt 啟用 SSL 憑證的自動請求和設定。這些憑證將儲存在 acme.json 檔案中，您可以自行備份並儲存在異地。
+
+
+
+
+
+
+
+
+
+
+
+
 
 
